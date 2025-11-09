@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spam Classifier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      --card-bg: rgba(255, 255, 255, 0.07);
+      --text-light: #f8fafc;
+      --text-dim: #cbd5e1;
+      --accent: #3b82f6;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border: rgba(255,255,255,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      font-weight: 600;
+      font-size: 1.9rem;
+      margin-bottom: 1.2rem;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-light);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 1rem;
+      resize: none;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #2563eb;
+      transform: scale(1.05);
+    }
+
+    .clear-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    .clear-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .result {
+      margin-top: 1.6rem;
+      padding: 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .spam {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--danger);
+    }
+
+    .not-spam {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: var(--success);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📬 Spam Classifier</h1>
+    <form method="POST">
+      <textarea id="messageBox" name="message" placeholder="Paste your message here..." required></textarea>
+      <div class="btn-group">
+        <button type="submit">Analyze</button>
+        <button type="button" class="clear-btn" id="clearBtn">Clear</button>
+      </div>
+    </form>
+
+    {% if prediction %}
+      <div class="result {{ 'spam' if prediction == 'Spam' else 'not-spam' }}">
+        {{ prediction }}
+      </div>
+    {% endif %}
+
+    <footer>Built with Flask ⚡ scikit-learn</footer>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('messageBox');
+    const clearBtn = document.getElementById('clearBtn');
+
+    // Load message from localStorage
+    textarea.value = localStorage.getItem('message') || '';
+
+    // Save message as user types
+    textarea.addEventListener('input', () => {
+      localStorage.setItem('message', textarea.value);
+    });
+
+    // Clear button logic
+    clearBtn.addEventListener('click', () => {
+      textarea.value = '';
+      localStorage.removeItem('message');
+    });
+  </script>
+</body>
+</html>
