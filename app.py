@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import pickle
 import string
 import nltk
+nltk.data.path.append("./nltk_data") 
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
@@ -9,11 +10,11 @@ from nltk.stem.porter import PorterStemmer
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt')
+    nltk.download('punkt', download_dir="./nltk_data")
 try:
     nltk.data.find('corpora/stopwords')
 except LookupError:
-    nltk.download('stopwords')
+    nltk.download('stopwords', download_dir="./nltk_data")
 
 ps = PorterStemmer()
 
