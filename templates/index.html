@@ -148,7 +148,7 @@
   <div class="card">
     <h1>📬 Spam Classifier</h1>
     <form method="POST">
-      <textarea id="messageBox" name="message" placeholder="Paste your message here..." required></textarea>
+      <textarea id="messageBox" name="message" placeholder="Paste your message here..." required>{{ message }}</textarea>
       <div class="btn-group">
         <button type="submit">Analyze</button>
         <button type="button" class="clear-btn" id="clearBtn">Clear</button>
@@ -169,7 +169,7 @@
     const clearBtn = document.getElementById('clearBtn');
 
     // Load message from localStorage
-    textarea.value = localStorage.getItem('message') || '';
+    textarea.value = localStorage.getItem('message') || textarea.value || '';
 
     // Save message as user types
     textarea.addEventListener('input', () => {

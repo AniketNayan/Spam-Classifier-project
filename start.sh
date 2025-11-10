@@ -1,22 +1,44 @@
 #!/usr/bin/env bash
-set -e
+set -ex   # -e exit on error, -x print commands
 
-# ensure a local nltk_data folder exists and downloads required corpora if missing
+echo "### START: startup script running on $(hostname) ###"
+
+# ensure a local nltk_data folder exists
 NLTK_DIR="./nltk_data"
 mkdir -p "$NLTK_DIR"
+ls -l .
 
+echo ">>> Checking/downloading NLTK data..."
 python - <<'PY'
-import nltk, os, sys
+import nltk, os
 nltk.data.path.append(os.path.abspath("nltk_data"))
-needed = ['punkt', 'stopwords']
+
+# list of packages we will ensure are present
+needed = ['punkt', 'punkt_tab', 'stopwords']
 for pkg in needed:
     try:
         nltk.data.find(pkg)
+        print(pkg + " OK")
     except LookupError:
-        print(f"Downloading {pkg}...")
+        print("Downloading " + pkg + "...")
         nltk.download(pkg, download_dir="nltk_data")
 print("NLTK ready")
 PY
 
-# start Gunicorn, binding to Render's $PORT so Render can route traffic
-exec gunicorn app:app --bind 0.0.0.0:${PORT:-10000} --workers 2 --threads 2
+echo ">>> Listing project files:"
+ls -la
+
+echo ">>> Python version:"
+python --version
+
+echo ">>> Pip freeze (first 40 lines):"
+pip freeze | sed -n '1,40p' || true
+
+echo ">>> Starting gunicorn (binding to 0.0.0.0:${PORT:-10000})..."
+exec gunicorn app:app \
+  --bind 0.0.0.0:${PORT:-10000} \
+  --workers 2 \
+  --threads 2 \
+  --log-level info \
+  --access-logfile - \
+  --error-logfile -
